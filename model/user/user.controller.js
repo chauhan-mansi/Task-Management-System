@@ -22,6 +22,7 @@ exports.createUser = async (req, res) => {
     await userData.save();
     res.status(200).json({ success: true, message: "User Account Created" });
   } catch (error) {
+    console.log(error);
     res.status(401).json({ success: false, message: "Internal Server Error" });
   }
 };
