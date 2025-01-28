@@ -1,18 +1,26 @@
 const project = require("./project.model");
+const userSchema = require("../user/user.model");
 
 exports.createProject = async (req, res) => {
   try {
-    const { name, description, maxTeamSize } = req.body;
+    const { name, description, maxTeamSize, user } = req.body;
     const existingProject = await project.findOne({ description });
     if (existingProject) {
       return res
         .status(401)
         .json({ success: false, message: "Project already exist" });
     }
+    const existingUser = await userSchema.findById(user);
+    if (!existingUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
     const projectData = new project({
       name,
       description,
       maxTeamSize,
+      user,
     });
     await projectData.save();
     res.status(200).json({ success: true, message: "Project Created" });
@@ -24,7 +32,7 @@ exports.createProject = async (req, res) => {
 
 exports.getProject = async (req, res) => {
   try {
-    const projects = await project.find();
+    const projects = await project.find().populate(["user"]);
     res.status(200).json({ success: true, data: projects });
   } catch (error) {
     console.log(error);
@@ -49,7 +57,7 @@ exports.getProjectById = async (req, res) => {
 };
 
 exports.updateProject = async (req, res) => {
-  const { name, description, maxTeamSize, id } = req.body;
+  const { name, description, maxTeamSize, user, id } = req.body;
   try {
     const existingProject = await project.findById(id);
     if (!existingProject) {
@@ -61,6 +69,7 @@ exports.updateProject = async (req, res) => {
       name,
       description,
       maxTeamSize,
+      user,
     });
     res
       .status(200)
