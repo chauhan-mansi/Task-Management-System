@@ -1,4 +1,5 @@
 const user = require("./user.model");
+const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res) => {
   try {
@@ -97,5 +98,27 @@ exports.deleteUser = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+exports.userLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const existingUser = await user.findOne({ email });
+    if (!existingUser) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email or password" });
+    }
+    if (password !== existingUser.password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email or password" });
+    }
+    const JWT_SECRET = "mansi282003";
+    const token = jwt.sign({ email, password }, JWT_SECRET);
+    await res.status(200).json({ success: true, token });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
