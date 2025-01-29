@@ -25,7 +25,7 @@ exports.createTask = async (req, res) => {
         .status(400)
         .json({ success: false, message: "User not found" });
     }
-    const taskData = new project({
+    const taskData = new task({
       taskName,
       description,
       assignee,

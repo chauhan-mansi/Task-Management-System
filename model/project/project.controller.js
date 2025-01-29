@@ -4,12 +4,6 @@ const userSchema = require("../user/user.model");
 exports.createProject = async (req, res) => {
   try {
     const { name, description, maxTeamSize, user } = req.body;
-    const existingProject = await project.findOne({ description });
-    if (existingProject) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Project already exist" });
-    }
     const existingUser = await userSchema.findById(user);
     if (!existingUser) {
       return res
@@ -32,7 +26,29 @@ exports.createProject = async (req, res) => {
 
 exports.getProject = async (req, res) => {
   try {
-    const projects = await project.find().populate(["user"]);
+    const page = req.query.page ? parseInt(req.query.page, 10) : 1;
+    const limit = req.query.limit ? parseInt(req.query.page, 10) : 10;
+    const perPage = limit;
+    const currentPage = page;
+    const totalData = await project.countDocuments();
+    const totalPages = Math.ceil(totalData / perPage);
+    const projects = await project
+      .find()
+      .populate(["user"])
+      .skip((currentPage - 1) * perPage)
+      .limit(perPage);
+    res.status(200).json({
+      success: true,
+      data: {
+        projects,
+        pagination: {
+          totalData,
+          totalPages,
+          currentPage,
+          perPage,
+        },
+      },
+    });
     res.status(200).json({ success: true, data: projects });
   } catch (error) {
     console.log(error);

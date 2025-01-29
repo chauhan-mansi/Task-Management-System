@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, require: true },
-    email: { type: String, require: true, unique: true },
-    password: { type: String, require: true },
-    profession: { type: String, require: true },
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    profession: { type: String, required: true },
     role: { type: String, required: true },
     designation: { type: String, required: true },
-    isActive: { type: String, enum: ["active", "notactive"], required: true },
+    isActive: { type: String, enum: ["active", "inactive"], required: true },
   },
   { timestamps: true }
 );

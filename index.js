@@ -12,6 +12,7 @@ app.use(cors());
 dotenv.config();
 app.use(express.json());
 const port = process.env.PORT || 5000;
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/user", userRoutes);
 app.use("/project", projectRoutes);

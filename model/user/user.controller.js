@@ -115,7 +115,7 @@ exports.userLogin = async (req, res) => {
         .json({ success: false, message: "Invalid email or password" });
     }
     const JWT_SECRET = "mansi282003";
-    const token = jwt.sign({ email, password }, JWT_SECRET);
+    const token = genToken({email, password})
     await res.status(200).json({ success: true, token });
   } catch (error) {
     console.log(error);
