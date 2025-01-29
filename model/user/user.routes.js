@@ -8,14 +8,14 @@ const {
   deleteUser,
   userLogin,
 } = require("./user.controller");
+const { isAuthenticateUser } = require("../../middleware/validate");
 
-const authentication = require('../../middleware/authentication') 
 
 const router = express.Router();
 router.post("/", createUser);
-router.get("/", getUser);
-router.get("/:id", getUserById);
-router.put("/", updateUser);
-router.delete("/:id", deleteUser);
-router.post("/login", authentication, userLogin);
+router.get("/",isAuthenticateUser, getUser);
+router.get("/:id",isAuthenticateUser, getUserById);
+router.put("/",isAuthenticateUser,  updateUser);
+router.delete("/:id",isAuthenticateUser, deleteUser);
+router.post("/login",userLogin);
 module.exports = router;

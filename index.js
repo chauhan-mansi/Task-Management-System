@@ -7,6 +7,7 @@ const userRoutes = require("./model/user/user.routes");
 const projectRoutes = require("./model/project/project.routes");
 const taskRoutes = require("./model/task/task.routes");
 
+
 const app = express();
 app.use(cors());
 dotenv.config();

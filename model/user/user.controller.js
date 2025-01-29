@@ -1,5 +1,5 @@
 const user = require("./user.model");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 exports.createUser = async (req, res) => {
   try {
@@ -100,25 +100,52 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-exports.userLogin = async (req, res) => {
+
+exports.userLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const existingUser = await user.findOne({ email });
-    if (!existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid email or password" });
+
+    if (!email || !password) {
+      return errorResponse(
+        res
+          .status(401)
+          .json({ success: false, message: "Invalid email or password" })
+      );
     }
-    if (password !== existingUser.password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid email or password" });
+
+    const user = await user.findOne({ email });
+    if (!user) {
+      return errorResponse(
+        res.status(401).json({ success: false, message: "User not found" })
+      );
     }
-    const JWT_SECRET = "mansi282003";
-    const token = genToken({email, password})
-    await res.status(200).json({ success: true, token });
+
+    const isPasswordMatch = await comparePassword(password, user.password);
+    if (!isPasswordMatch) {
+      return errorResponse(
+        res
+          .status(401)
+          .json({ success: false, message: "Incorrect email or password" })
+      );
+    }
+
+    const accessToken = generateAccessToken(user);
+
+    return successResponse(
+      res,
+      {
+        id: user._id,
+        fullName: user.fullName,
+        isProfileComplete: user.isProfileComplete,
+        accessToken,
+        gender: user.gender || "",
+      },
+      res
+        .status(200)
+        .json({ success: true, message: "User successfully loggedin" })
+    );
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    res.status(401).json({ success: false, message: "Internal Server Error" });
   }
 };
