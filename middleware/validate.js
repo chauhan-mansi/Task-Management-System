@@ -5,7 +5,7 @@ dotenv.config();
 
 const isAuthenticateUser = (req, res, next) => {
   const authHeader = req.headers.authorization;
-  // eslint-disable-next-line
+
   console.log("req ----->", req.route.path);
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return errorResponse(
