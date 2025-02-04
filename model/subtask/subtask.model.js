@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const subTaskSchema = new mongoose.Schema (
     
        {
+           taskName:{type: mongoose.Schema.Types.ObjectId, ref: "Task"},
            subTaskName: { type: String, required: true },
            description: { type: String, required: true },
            assignee: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
