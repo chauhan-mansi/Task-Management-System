@@ -31,7 +31,7 @@ exports.registerUser = async (req, res) => {
   try {
     const { fullName, password, email: emailInput } = req.body;
 
-    const allowedFields = ['fullName', 'email', 'password'];
+    const allowedFields = ["fullName", "email", "password"];
 
     if (!validateAllowedFields(allowedFields, req.body, res)) return;
 
@@ -40,7 +40,7 @@ exports.registerUser = async (req, res) => {
     const isValid = validateInput(
       userValidations,
       { fullName, email, password },
-      res,
+      res
     );
     if (!isValid) return;
 
@@ -54,7 +54,7 @@ exports.registerUser = async (req, res) => {
 
     newUser = await userModel.findById(
       newUser._id,
-      'fullName email password createdAt updatedAt',
+      "fullName email password createdAt updatedAt"
     );
 
     const { _id, createdAt, updatedAt } = newUser;
@@ -70,7 +70,7 @@ exports.registerUser = async (req, res) => {
       res,
       updatedUser,
       userRegisterMessage,
-      statusCodes.SUCCESS,
+      statusCodes.SUCCESS
     );
   } catch (error) {
     if (error.code === 11000 && error.keyValue.email) {
@@ -79,7 +79,7 @@ exports.registerUser = async (req, res) => {
         res,
         new Error(ValidationErrorMessage),
         emailUniqueMessage,
-        statusCodes.VALIDATION_ERROR,
+        statusCodes.VALIDATION_ERROR
       );
     }
 
@@ -88,11 +88,10 @@ exports.registerUser = async (req, res) => {
       res,
       error,
       ServerErrorMessage,
-      statusCodes.SERVER_ERROR,
+      statusCodes.SERVER_ERROR
     );
   }
 };
-
 
 exports.getUser = async (req, res) => {
   try {
@@ -225,7 +224,7 @@ exports.resetPassword = async (req, res) => {
       !validateInput(
         resetPasswordValidations,
         { newPassword, confirmNewPassword },
-        res,
+        res
       )
     )
       return;
@@ -235,7 +234,7 @@ exports.resetPassword = async (req, res) => {
         res,
         new Error(ValidationErrorMessage),
         PasswordShouldNotSame,
-        statusCodes.VALIDATION_ERROR,
+        statusCodes.VALIDATION_ERROR
       );
     }
 
@@ -244,7 +243,7 @@ exports.resetPassword = async (req, res) => {
         res,
         new Error(ValidationErrorMessage),
         PasswordNotMatch,
-        statusCodes.VALIDATION_ERROR,
+        statusCodes.VALIDATION_ERROR
       );
     }
 
@@ -254,7 +253,7 @@ exports.resetPassword = async (req, res) => {
         res,
         new Error(UserNotFoundMessage),
         UserNotFoundMessage,
-        statusCodes.NOT_FOUND,
+        statusCodes.NOT_FOUND
       );
     }
 
@@ -264,7 +263,7 @@ exports.resetPassword = async (req, res) => {
         res,
         new Error(UnauthorizedErrorMessage),
         IncorrectCurrentPassword,
-        statusCodes.UNAUTHORIZED,
+        statusCodes.UNAUTHORIZED
       );
     }
 
@@ -277,7 +276,7 @@ exports.resetPassword = async (req, res) => {
       res,
       undefined,
       PasswordResetSucessMessage,
-      statusCodes.SUCCESS,
+      statusCodes.SUCCESS
     );
   } catch (error) {
     logger.error(`reset password error: ${error.message}`);
@@ -285,7 +284,7 @@ exports.resetPassword = async (req, res) => {
       res,
       error,
       ServerErrorMessage,
-      statusCodes.SERVER_ERROR,
+      statusCodes.SERVER_ERROR
     );
   }
 };
