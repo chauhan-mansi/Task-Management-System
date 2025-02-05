@@ -8,9 +8,9 @@ const isAuthenticateUser = (req, res, next) => {
 
   console.log("req ----->", req.route.path);
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return errorResponse(
+    
       res.status(401).json({ success: false, message: "Authentication Failed" })
-    );
+    
   }
 
   const token = authHeader.split(" ")[1];

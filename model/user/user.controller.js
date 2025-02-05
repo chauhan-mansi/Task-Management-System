@@ -1,3 +1,4 @@
+const { comparePassword, getHashPassword } = require("../../utils/password");
 const user = require("./user.model");
 const jwt = require("jsonwebtoken");
 
@@ -29,67 +30,35 @@ const jwt = require("jsonwebtoken");
 // };
 exports.registerUser = async (req, res) => {
   try {
-    const { fullName, password, email: emailInput } = req.body;
-
-    const allowedFields = ["fullName", "email", "password"];
-
-    if (!validateAllowedFields(allowedFields, req.body, res)) return;
-
-    const email = emailInput.toLowerCase();
-
-    const isValid = validateInput(
-      userValidations,
-      { fullName, email, password },
-      res
-    );
-    if (!isValid) return;
+    const { name, email, password, profession, role, designation, isActive } =
+      req.body;
 
     const hashedPassword = await getHashPassword(password);
 
-    let newUser = await userModel.create({
-      fullName,
+    let newUser = await user.create({
+      name,
       email,
+      profession,
+      role,
+      designation,
+      isActive,
       password: hashedPassword,
     });
 
-    newUser = await userModel.findById(
-      newUser._id,
-      "fullName email password createdAt updatedAt"
-    );
 
-    const { _id, createdAt, updatedAt } = newUser;
-    const updatedUser = {
-      id: _id,
-      fullName,
-      email,
-      createdAt,
-      updatedAt,
-    };
 
-    return successResponse(
-      res,
-      updatedUser,
-      userRegisterMessage,
-      statusCodes.SUCCESS
-    );
-  } catch (error) {
+    return res
+      .status(200)
+      .json({ message: "User Registered successfully!", newUser });
+  } 
+  catch (error) {
     if (error.code === 11000 && error.keyValue.email) {
-      logger.error(`Registration error: ${emailUniqueMessage}`);
-      return errorResponse(
-        res,
-        new Error(ValidationErrorMessage),
-        emailUniqueMessage,
-        statusCodes.VALIDATION_ERROR
-      );
+      return res
+        .status(401)
+        .json({ message: "Email already exist please verify your email!!" });
     }
-
-    logger.error(`Registration error: ${error.message}`);
-    return errorResponse(
-      res,
-      error,
-      ServerErrorMessage,
-      statusCodes.SERVER_ERROR
-    );
+    console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -171,44 +140,40 @@ exports.userLogin = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return errorResponse(
-        res
-          .status(401)
-          .json({ success: false, message: "Invalid email or password" })
-      );
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
     }
 
-    const user = await user.findOne({ email });
-    if (!user) {
-      return errorResponse(
-        res.status(401).json({ success: false, message: "User not found" })
-      );
+    const userss = await user.findOne({ email });
+    if (!userss) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not found" });
     }
 
-    const isPasswordMatch = await comparePassword(password, user.password);
+    const isPasswordMatch = await comparePassword(password, userss.password);
     if (!isPasswordMatch) {
-      return errorResponse(
-        res
-          .status(401)
-          .json({ success: false, message: "Incorrect email or password" })
-      );
+      return res
+        .status(401)
+        .json({ success: false, message: "Incorrect email or password" });
     }
 
-    const accessToken = generateAccessToken(user);
+    const accessToken = generateAccessToken(userss);
 
-    return successResponse(
-      res,
-      {
-        id: user._id,
-        fullName: user.fullName,
-        isProfileComplete: user.isProfileComplete,
-        accessToken,
-        gender: user.gender || "",
-      },
-      res
-        .status(200)
-        .json({ success: true, message: "User successfully loggedin" })
-    );
+    const formattedUser = {
+      id: userss._id,
+      fullName: userss.fullName,
+      isProfileComplete: userss.isProfileComplete,
+      accessToken,
+      gender: userss.gender || "",
+    };
+
+    return res.status(200).json({
+      success: true,
+      message: "User successfully loggedin",
+      formattedUser,
+    });
   } catch (error) {
     console.log(error);
     res.status(401).json({ success: false, message: "Internal Server Error" });
@@ -230,41 +195,27 @@ exports.resetPassword = async (req, res) => {
       return;
 
     if (newPassword === currentPassword) {
-      return errorResponse(
-        res,
-        new Error(ValidationErrorMessage),
-        PasswordShouldNotSame,
-        statusCodes.VALIDATION_ERROR
-      );
+      res
+        .status(401)
+        .json({ success: false, message: "Internal Server Error" });
     }
 
     if (newPassword !== confirmNewPassword) {
-      return errorResponse(
-        res,
-        new Error(ValidationErrorMessage),
-        PasswordNotMatch,
-        statusCodes.VALIDATION_ERROR
-      );
+      res.status(401).json({
+        success: false,
+        message:
+          "Your current password and new password is same please provide another password!!",
+      });
     }
 
     const user = await userModel.findById(userId);
     if (!user) {
-      return errorResponse(
-        res,
-        new Error(UserNotFoundMessage),
-        UserNotFoundMessage,
-        statusCodes.NOT_FOUND
-      );
+      res.status(401).json({ success: false, message: "User not found" });
     }
 
     const isMatch = await comparePassword(currentPassword, user.password);
     if (!isMatch) {
-      return errorResponse(
-        res,
-        new Error(UnauthorizedErrorMessage),
-        IncorrectCurrentPassword,
-        statusCodes.UNAUTHORIZED
-      );
+      res.status(401).json({ success: false, message: "Incorrect password" });
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
@@ -279,12 +230,6 @@ exports.resetPassword = async (req, res) => {
       statusCodes.SUCCESS
     );
   } catch (error) {
-    logger.error(`reset password error: ${error.message}`);
-    return errorResponse(
-      res,
-      error,
-      ServerErrorMessage,
-      statusCodes.SERVER_ERROR
-    );
+    res.status(401).json({ success: false, message: "Internal Server Error" });
   }
 };
