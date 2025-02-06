@@ -10,9 +10,9 @@ const { isAuthenticateUser } = require("../../middleware/validate");
 
 const router = express.Router();
 
-router.post("/", isAuthenticateUser, createTask);
-router.get("/", isAuthenticateUser, getTask);
-router.get("/:id", isAuthenticateUser, getTaskById);
+router.post("/", createTask);
+router.get("/", getTask);
+router.get("/:id", getTaskById);
 router.put("/", isAuthenticateUser, updateTask);
 router.delete("/:id", isAuthenticateUser, deleteTask);
 module.exports = router;

@@ -7,6 +7,8 @@ const userRoutes = require("./model/user/user.routes");
 const projectRoutes = require("./model/project/project.routes");
 const subTaskRoutes = require("./model/subtask/subtask.routes");
 const taskRoutes = require("./model/task/task.routes");
+const commentRoutes = require("./model/comment/comment.routes");
+const replyRoutes = require("./model/reply/reply.routes");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -20,6 +22,8 @@ app.use("/user", userRoutes);
 app.use("/project", projectRoutes);
 app.use("/task", taskRoutes);
 app.use("/subtask", subTaskRoutes);
+app.use("/comment", commentRoutes);
+app.use("/reply", replyRoutes);
 
 app.listen(port, () => {
   connectDB();
