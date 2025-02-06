@@ -34,7 +34,9 @@ exports.createSubTask = async (req, res) => {
     res.status(200).json({ success: true, message: "SubTask Created" });
   } catch (error) {
     console.log(error);
-    res.status(401).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -63,10 +65,11 @@ exports.getSubTask = async (req, res) => {
         },
       },
     });
-    res.status(200).json({ success: true, data: subTasks });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -83,7 +86,9 @@ exports.getSubTaskById = async (req, res) => {
     res.status(200).json({ success: true, data: existingSubTask });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -121,7 +126,9 @@ exports.updateSubTask = async (req, res) => {
       .json({ success: true, message: "SubTask updated successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -140,6 +147,8 @@ exports.deleteSubTask = async (req, res) => {
       .json({ success: true, message: "SubTask deleted successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };

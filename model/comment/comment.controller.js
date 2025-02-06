@@ -1,6 +1,4 @@
 const comment = require("./comment.model");
-// const userSchema = require("../user/user.model");
-// const taskSchema = require("../task/task.model");
 
 exports.createComment = async (req, res) => {
   try {
@@ -15,7 +13,9 @@ exports.createComment = async (req, res) => {
     res.status(200).json({ success: true, message: "Comment Added" });
   } catch (error) {
     console.log(error);
-    res.status(401).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -44,10 +44,11 @@ exports.getComment = async (req, res) => {
         },
       },
     });
-    // res.status(200).json({ success: true, data: comments });
   } catch (error) {
     console.log(error);
-   return res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -63,7 +64,9 @@ exports.getCommentById = async (req, res) => {
 
     res.status(200).json({ success: true, data: existingComment });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -87,7 +90,9 @@ exports.updateComment = async (req, res) => {
       .json({ success: true, message: "Comment updated successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -106,6 +111,8 @@ exports.deleteComment = async (req, res) => {
       .json({ success: true, message: "Comment deleted successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };

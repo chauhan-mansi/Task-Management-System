@@ -14,7 +14,9 @@ exports.createReply = async (req, res) => {
     res.status(200).json({ success: true, message: "Reply Added" });
   } catch (error) {
     console.log(error);
-    res.status(401).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -43,10 +45,11 @@ exports.getReply = async (req, res) => {
         },
       },
     });
-    res.status(200).json({ success: true, data: replies });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -62,7 +65,9 @@ exports.getReplyById = async (req, res) => {
 
     res.status(200).json({ success: true, data: existingReply });
   } catch (error) {
-   return  res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -87,7 +92,9 @@ exports.updateReply = async (req, res) => {
       .json({ success: true, message: "Reply updated successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -106,6 +113,8 @@ exports.deleteReply = async (req, res) => {
       .json({ success: true, message: "Reply deleted successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };

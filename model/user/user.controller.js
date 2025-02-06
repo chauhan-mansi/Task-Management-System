@@ -2,32 +2,6 @@ const { comparePassword, getHashPassword } = require("../../utils/password");
 const user = require("./user.model");
 const jwt = require("jsonwebtoken");
 
-// exports.createUser = async (req, res) => {
-//   try {
-//     const { name, email, password, profession, role, designation, isActive } =
-//       req.body;
-//     const existingUser = await user.findOne({ name });
-//     if (existingUser) {
-//       return res
-//         .status(401)
-//         .json({ success: false, message: "User already exist" });
-//     }
-//     const userData = new user({
-//       name,
-//       email,
-//       password,
-//       profession,
-//       role,
-//       designation,
-//       isActive,
-//     });
-//     await userData.save();
-//     res.status(200).json({ success: true, message: "User Account Created" });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(401).json({ success: false, message: "Internal Server Error" });
-//   }
-// };
 exports.registerUser = async (req, res) => {
   try {
     const { name, email, password, profession, role, designation, isActive } =
@@ -45,13 +19,10 @@ exports.registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-
-
     return res
       .status(200)
       .json({ message: "User Registered successfully!", newUser });
-  } 
-  catch (error) {
+  } catch (error) {
     if (error.code === 11000 && error.keyValue.email) {
       return res
         .status(401)
@@ -68,7 +39,9 @@ exports.getUser = async (req, res) => {
     res.status(200).json({ success: true, data: users });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -84,7 +57,9 @@ exports.getUserById = async (req, res) => {
 
     res.status(200).json({ success: true, data: existingUser });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -112,7 +87,9 @@ exports.updateUser = async (req, res) => {
       .json({ success: true, message: "User updated successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -131,7 +108,9 @@ exports.deleteUser = async (req, res) => {
       .json({ success: true, message: "User deleted successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -176,7 +155,9 @@ exports.userLogin = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(401).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -223,13 +204,12 @@ exports.resetPassword = async (req, res) => {
     user.password = hashedPassword;
     await user.save();
 
-    return successResponse(
-      res,
-      undefined,
-      PasswordResetSucessMessage,
-      statusCodes.SUCCESS
-    );
+    return res
+      .status(200)
+      .json({ success: true, message: "Password Reset Successfull" });
   } catch (error) {
-    res.status(401).json({ success: false, message: "Internal Server Error" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Internal Server Error" });
   }
 };

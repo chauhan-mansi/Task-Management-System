@@ -10,10 +10,10 @@ const {
 } = require("./comment.controller");
 
 const router = express.Router();
-router.post("/", createComment);
-router.get("/", getComment);
-router.get("/:id", getCommentById);
-router.put("/", updateComment);
-router.delete("/:id", deleteComment);
+router.post("/", isAuthenticateUser, createComment);
+router.get("/", isAuthenticateUser, getComment);
+router.get("/:id", isAuthenticateUser, getCommentById);
+router.put("/", isAuthenticateUser, updateComment);
+router.delete("/:id", isAuthenticateUser, deleteComment);
 
 module.exports = router;

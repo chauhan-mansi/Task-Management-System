@@ -20,7 +20,7 @@ exports.createProject = async (req, res) => {
     res.status(200).json({ success: true, message: "Project Created" });
   } catch (error) {
     console.log(error);
-    res.status(401).json({ success: false, message: "Internal Server Error" });
+    return res.status(401).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -49,10 +49,9 @@ exports.getProject = async (req, res) => {
         },
       },
     });
-    res.status(200).json({ success: true, data: projects });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -68,7 +67,7 @@ exports.getProjectById = async (req, res) => {
 
     res.status(200).json({ success: true, data: existingProject });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
@@ -92,7 +91,7 @@ exports.updateProject = async (req, res) => {
       .json({ success: true, message: "Project updated successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -111,6 +110,6 @@ exports.deleteProject = async (req, res) => {
       .json({ success: true, message: "Project deleted successfully" });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
