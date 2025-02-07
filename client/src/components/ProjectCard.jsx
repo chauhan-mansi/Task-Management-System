@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { Paper, Typography, Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const ProjectCard = ({ title, description }) => {
   const [hover, setHover] = useState(false);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/project1`);
+  };
 
   return (
     <Paper
@@ -18,9 +24,9 @@ const ProjectCard = ({ title, description }) => {
       }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      onClick={handleClick}
     >
       <Typography variant="h6">{title}</Typography>
-
 
       <Box
         sx={{
