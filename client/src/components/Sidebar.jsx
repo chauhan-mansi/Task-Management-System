@@ -1,6 +1,7 @@
-import { Box, Button, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Button, List, ListItem, IconButton } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
-const Sidebar = ({ toggleDrawer }) => {
+const Sidebar = ({ toggleDrawer, open, handleToggle }) => {
   return (
     <Box
       sx={{
@@ -10,17 +11,19 @@ const Sidebar = ({ toggleDrawer }) => {
         p: 2,
       }}
     >
-      <Button onClick={toggleDrawer} variant="contained" color="primary">
-        Close
-      </Button>
-      <List>
-        <ListItem button>
-          <ListItemText primary="Home" />
-        </ListItem>
-        <ListItem button>
-          <ListItemText primary="To-Do" />
-        </ListItem>
-      </List>
+      <IconButton onClick={toggleDrawer} color="primary">
+        <MenuIcon />
+      </IconButton>
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <List>
+          <ListItem button>
+            <Button>HOME</Button>
+          </ListItem>
+          <ListItem button>
+            <Button>TO DO</Button>
+          </ListItem>
+        </List>
+      </Box>
     </Box>
   );
 };
