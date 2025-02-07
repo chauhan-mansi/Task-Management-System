@@ -1,26 +1,46 @@
-import { Box, Typography, Grid } from "@mui/material";
+import { useState } from "react";
+import { Box, Drawer } from "@mui/material";
+import Typography from "@mui/material/Typography";
+import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import ProjectCard from "./ProjectCard";
 
 const Home = () => {
+  const [open, setOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setOpen(!open);
+  };
+
   return (
     <Box sx={{ display: "flex", height: "100vh", backgroundColor: "#f0f0f0" }}>
-     
-      <Sidebar />
+      {/* Navbar */}
+      <Navbar toggleDrawer={toggleDrawer} />
 
-   
-      <Box sx={{ flex: 1, p: 4 }}>
+      {/* Sidebar Drawer */}
+      <Drawer open={open} onClose={toggleDrawer}>
+        <Sidebar toggleDrawer={toggleDrawer} />
+      </Drawer>
+
+      {/* Main Content */}
+      <Box sx={{ flex: 1, p: 4, mt: 8 }}>
         <Typography variant="h4" gutterBottom>
           Welcome, Mansi 😊
         </Typography>
 
-        <Grid container spacing={2}>
+        {/* Project Cards Grid */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: 2,
+            mt: 2,
+          }}
+        >
           {["Project 1", "Project 2", "Project 3", "Project 4"].map((name, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <ProjectCard projectName={name} />
-            </Grid>
+            <ProjectCard key={index} projectName={name} />
           ))}
-        </Grid>
+        </Box>
       </Box>
     </Box>
   );

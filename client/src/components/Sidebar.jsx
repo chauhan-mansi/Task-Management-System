@@ -1,10 +1,26 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, List, ListItem, ListItemText } from "@mui/material";
 
-const Sidebar = () => {
+const Sidebar = ({ toggleDrawer }) => {
   return (
-    <Box sx={{ width: 200, backgroundColor: "#ddd", p: 2, height: "100vh" }}>
-      <Button variant="contained" fullWidth sx={{ mb: 2 }}>Home</Button>
-      <Button variant="contained" fullWidth>To Do</Button>
+    <Box
+      sx={{
+        width: 250,
+        height: "100vh",
+        backgroundColor: "#e0e0e0",
+        p: 2,
+      }}
+    >
+      <Button onClick={toggleDrawer} variant="contained" color="primary">
+        Close
+      </Button>
+      <List>
+        <ListItem button>
+          <ListItemText primary="Home" />
+        </ListItem>
+        <ListItem button>
+          <ListItemText primary="To-Do" />
+        </ListItem>
+      </List>
     </Box>
   );
 };
