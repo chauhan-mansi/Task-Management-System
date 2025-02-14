@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     profession: { type: String, required: true },
     role: { type: String, required: true, default: "project" },
     designation: { type: String, required: true },
-    isActive: { type: String, enum: ["active", "inactive"], required: true },
+    isActive: { type: String, enum: ["true", "false"], required: true },
   },
   { timestamps: true }
 );

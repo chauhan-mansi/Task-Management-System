@@ -13,7 +13,7 @@ const Sidebar = ({ toggleDrawer }) => {
         p: 2,
       }}
     >
-      <IconButton onClick={toggleDrawer} color="primary">
+      <IconButton onClick={() => toggleDrawer(false)} color="primary">
         <MenuIcon />
       </IconButton>
       <Box display="flex" flexDirection="column" alignItems="center">

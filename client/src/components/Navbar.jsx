@@ -5,7 +5,7 @@ const Navbar = ({ toggleDrawer }) => {
   return (
     <AppBar position="fixed">
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-        <IconButton color="inherit" onClick={toggleDrawer} edge="start">
+      <IconButton color="inherit" onClick={() => toggleDrawer(true)} edge="start">
           <MenuIcon />
         </IconButton>
 

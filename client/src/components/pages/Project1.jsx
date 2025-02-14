@@ -62,7 +62,9 @@ const ProjectDetails = () => {
     status: "To Do",
   });
 
-  const toggleDrawer = () => setOpenDrawer(!openDrawer);
+  const toggleDrawer = (newOpen) => {
+    setOpenDrawer(newOpen);
+  };
   const handleOpenDialog = () => setOpenDialog(true);
   const handleCloseDialog = () => setOpenDialog(false);
 
@@ -87,7 +89,7 @@ const ProjectDetails = () => {
     <Box sx={{ display: "flex", height: "100vh", backgroundColor: "#f0f0f0" }}>
       <Navbar toggleDrawer={toggleDrawer} />
 
-      <Drawer open={openDrawer} onClose={toggleDrawer}>
+      <Drawer open={openDrawer} onClose={() => setOpenDrawer(false)}>
         <Sidebar toggleDrawer={toggleDrawer} />
       </Drawer>
 
@@ -166,7 +168,6 @@ const ProjectDetails = () => {
           </Table>
         </TableContainer>
 
-      
         <Dialog open={openDialog} onClose={handleCloseDialog}>
           <DialogTitle>Add New Task</DialogTitle>
           <DialogContent

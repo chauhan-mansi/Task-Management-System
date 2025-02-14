@@ -1,17 +1,49 @@
 import React, { useState } from "react";
-import { Container, TextField, Button, Typography, Box } from "@mui/material";
-import { Link } from "react-router-dom";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  MenuItem,
+} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Signup = () => {
-  const [formData, setFormData] = useState({ username: "", email: "", password: "" });
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    profession: "",
+    role: "",
+    designation: "",
+    isActive: true,
+  });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup Data:", formData);
+    try {
+      const response = await axios.post("http://localhost:3000/user", formData);
+      console.log("Signup successful:", response.data);
+
+      alert("Signup successful! Redirecting to login...");
+      navigate("/login");
+    } catch (error) {
+      console.error(
+        "Signup error:",
+        error.response?.data?.message || error.message
+      );
+      alert(
+        error.response?.data?.message || "Signup failed. Please try again."
+      );
+    }
   };
 
   return (
@@ -23,9 +55,9 @@ const Signup = () => {
         <form onSubmit={handleSubmit}>
           <TextField
             fullWidth
-            label="Username"
-            name="username"
-            value={formData.username}
+            label="Name"
+            name="name"
+            value={formData.name}
             onChange={handleChange}
             margin="normal"
             required
@@ -50,7 +82,40 @@ const Signup = () => {
             margin="normal"
             required
           />
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+          <TextField
+            fullWidth
+            label="Profession"
+            name="profession"
+            value={formData.profession}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Designation"
+            name="designation"
+            value={formData.designation}
+            onChange={handleChange}
+            margin="normal"
+            required
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
             Sign Up
           </Button>
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>

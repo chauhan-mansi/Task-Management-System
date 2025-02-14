@@ -1,6 +1,8 @@
 const { comparePassword, getHashPassword } = require("../../utils/password");
 const user = require("./user.model");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const { createJwtToken } = require("../../utils/jwtHelper");
 
 exports.registerUser = async (req, res) => {
   try {
@@ -114,14 +116,61 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
+// exports.userLogin = async (req, res, next) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (!email || !password) {
+//       return res
+//         .status(401)
+//         .json({ success: false, message: "Invalid email or password" });
+//     }
+
+//     const userss = await user.findOne({ email });
+//     if (!userss) {
+//       return res
+//         .status(401)
+//         .json({ success: false, message: "User not found" });
+//     }
+
+//     const isPasswordMatch = await comparePassword(password, userss.password);
+//     if (!isPasswordMatch) {
+//       return res
+//         .status(401)
+//         .json({ success: false, message: "Incorrect email or password" });
+//     }
+
+//     const accessToken = generateAccessToken(userss);
+
+//     const formattedUser = {
+//       id: userss._id,
+//       fullName: userss.fullName,
+//       isProfileComplete: userss.isProfileComplete,
+//       accessToken,
+//       gender: userss.gender || "",
+//     };
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "User successfully loggedin",
+//       formattedUser,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res
+//       .status(401)
+//       .json({ success: false, message: "Internal Server Error" });
+//   }
+// };
+
 exports.userLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
       return res
-        .status(401)
-        .json({ success: false, message: "Invalid email or password" });
+        .status(400)
+        .json({ success: false, message: "Email and password are required" });
     }
 
     const userss = await user.findOne({ email });
@@ -131,32 +180,30 @@ exports.userLogin = async (req, res, next) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const isPasswordMatch = await comparePassword(password, userss.password);
+    const isPasswordMatch = await bcrypt.compare(password, userss.password);
     if (!isPasswordMatch) {
       return res
         .status(401)
         .json({ success: false, message: "Incorrect email or password" });
     }
 
-    const accessToken = generateAccessToken(userss);
-
-    const formattedUser = {
-      id: userss._id,
-      fullName: userss.fullName,
-      isProfileComplete: userss.isProfileComplete,
-      accessToken,
-      gender: userss.gender || "",
-    };
+    const accessToken = createJwtToken(userss);
 
     return res.status(200).json({
       success: true,
-      message: "User successfully loggedin",
-      formattedUser,
+      message: "User successfully logged in",
+      token: accessToken,
+      user: {
+        id: userss._id,
+        fullName: userss.fullName,
+        isProfileComplete: userss.isProfileComplete,
+        gender: userss.gender || "",
+      },
     });
   } catch (error) {
-    console.log(error);
+    console.error("Login Error:", error);
     return res
-      .status(401)
+      .status(500)
       .json({ success: false, message: "Internal Server Error" });
   }
 };
