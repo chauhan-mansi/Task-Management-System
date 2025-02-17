@@ -29,6 +29,7 @@ const Login = () => {
       if (response.data.success) {
         localStorage.setItem("token", response.data.token); 
         localStorage.setItem("user", JSON.stringify(response.data.user)); 
+        localStorage.setItem("userId", response.data.user._id);
         navigate("/home"); 
       } else {
         setError(response.data.message);

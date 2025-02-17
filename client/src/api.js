@@ -17,18 +17,27 @@ export const getProjects = async () => {
   }
 };
 
-export const createProject = async (projectData) => {
+export const createProject = async (projectData, token) => {
   try {
-    const token = getAuthToken();
-    const response = await axios.post(API_BASE_URL, projectData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axios.post(
+      "http://localhost:3000/project",
+      projectData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,  
+        },
+      }
+    );
     return response.data;
   } catch (error) {
-    console.error("Error creating project:", error);
+    console.error("Error creating project:", error.response?.data || error);
     return null;
   }
 };
+
+
+
 
 export const deleteProject = async (projectId) => {
   try {

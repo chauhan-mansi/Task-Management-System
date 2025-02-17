@@ -1,26 +1,65 @@
 const project = require("./project.model");
 const userSchema = require("../user/user.model");
+const jwt = require("jsonwebtoken");
+
+// exports.createProject = async (req, res) => {
+//   try {
+//     const token = req.headers.authorization?.split(" ")[1]; 
+//     if (!token) {
+//       return res.status(401).json({ success: false, message: "Unauthorized" });
+//     }
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     const userId = decoded.id;
+
+//     const { name, description, maxTeamSize, user } = req.body;
+//     const existingUser = await userSchema.findById(user);
+//     if (!existingUser) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "User not found" });
+//     }
+//     const projectData = new project({
+//       name,
+//       description,
+//       maxTeamSize,
+//       user: userId,
+//     });
+//     await projectData.save();
+//     res.status(200).json({ success: true, message: "Project Created" });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(401).json({ success: false, message: "Internal Server Error" });
+//   }
+// };
+
 
 exports.createProject = async (req, res) => {
   try {
-    const { name, description, maxTeamSize, user } = req.body;
-    const existingUser = await userSchema.findById(user);
+    const { name, description, maxTeamSize} = req.body;
+  
+    const userId = req.user.id; 
+
+    const existingUser = await userSchema.findById(userId);
     if (!existingUser) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User not found" });
+      return res.status(400).json({ success: false, message: "User not found" });
     }
+
     const projectData = new project({
       name,
       description,
       maxTeamSize,
-      user,
+      user: userId, 
     });
+
     await projectData.save();
-    res.status(200).json({ success: true, message: "Project Created" });
+    res.status(200).json({ 
+      success: true, 
+      message: "Project Created", 
+      project: projectData 
+    });
   } catch (error) {
     console.log(error);
-    return res.status(401).json({ success: false, message: "Internal Server Error" });
+    return res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 

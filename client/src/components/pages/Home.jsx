@@ -23,6 +23,7 @@ const Home = () => {
   const [projects, setProjects] = useState([]);
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
+  const [maxTeamSize, setMaxTeamSize] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -31,35 +32,83 @@ const Home = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const data = await getProjects(token);
-      setProjects(data);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+      try {
+        const projectList = await getProjects(token);
+        setProjects(projectList);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
     };
     fetchProjects();
-  }, []);
+  }, [navigate]);
 
   const handleAddProject = async () => {
-    if (!projectName || !description) return;
-    const newProject = await createProject(
-      { name: projectName, description },
-      token
-    );
-    if (newProject) {
-      setProjects([...projects, newProject]);
-      setProjectName("");
-      setDescription("");
-      setDialogOpen(false);
+    if (!projectName.trim() || !description.trim() || !maxTeamSize.trim()) {
+      alert("Project Name, Description, and Team Size are required.");
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Unauthorized! Please log in again.");
+      navigate("/login");
+      return;
+    }
+
+    const decodedToken = JSON.parse(atob(token.split(".")[1]));
+    const userId = decodedToken?.id;
+
+    if (!userId) {
+      alert("Invalid token. Please log in again.");
+      navigate("/login");
+      return;
+    }
+
+    const projectData = {
+      name: projectName,
+      description,
+      maxTeamSize: parseInt(maxTeamSize, 10),
+      user: userId,
+    };
+
+    console.log("Sending request with:", projectData, "Token:", token);
+
+    try {
+      const newProject = await createProject(projectData, token);
+
+      if (newProject?.success && newProject?.project) {
+        console.log("Project created successfully:", newProject.project);
+        setProjects((prev) => [...prev, newProject.project]);
+        setProjectName("");
+        setDescription("");
+        setMaxTeamSize("");
+        setDialogOpen(false);
+      } else {
+        alert(
+          newProject?.message || "Failed to create project. Please try again."
+        );
+      }
+    } catch (error) {
+      console.error("Error creating project:", error?.response?.data || error);
+      alert("Error creating project. Check console for details.");
     }
   };
 
-  const handleDeleteProject = async (id) => {
-    const confirmDelete = window.confirm(
-      "Do you really want to delete this project?"
-    );
-    if (confirmDelete) {
-      const deleted = await deleteProject(id, token);
-      if (deleted) {
-        setProjects(projects.filter((project) => project._id !== id));
-      }
+  const handleDeleteProject = async (projectId) => {
+    if (!window.confirm("Do you really want to delete this project?")) return;
+
+    try {
+      await deleteProject(projectId, token);
+      setProjects((prev) =>
+        prev.filter((project) => project._id !== projectId)
+      );
+    } catch (error) {
+      console.error("Error deleting project:", error);
     }
   };
 
@@ -79,6 +128,7 @@ const Home = () => {
     const { name, value } = e.target;
     if (name === "title") setProjectName(value);
     if (name === "description") setDescription(value);
+    if (name === "maxTeamSize") setMaxTeamSize(value);
   };
 
   return (
@@ -104,12 +154,12 @@ const Home = () => {
         >
           {projects.map((project) => (
             <Box
-              key={project.id}
+              key={project._id}
               sx={{
                 width: { xs: "100%", sm: "48%", md: "23%" },
                 cursor: "pointer",
               }}
-              onClick={() => navigate(`/project/${project.id}`)}
+              onClick={() => navigate(`/project/${project._id}`)}
             >
               <ProjectCard
                 title={project.name}
@@ -122,7 +172,7 @@ const Home = () => {
                 sx={{ mt: 1 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleDeleteProject(project.id);
+                  handleDeleteProject(project._id);
                 }}
               >
                 Delete
@@ -168,6 +218,14 @@ const Home = () => {
             fullWidth
             multiline
             rows={2}
+          />
+          <TextField
+            label="Max Team Size"
+            name="maxTeamSize"
+            type="number"
+            value={maxTeamSize}
+            onChange={handleChange}
+            fullWidth
           />
         </DialogContent>
         <DialogActions>
