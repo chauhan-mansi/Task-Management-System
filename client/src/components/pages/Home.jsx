@@ -159,7 +159,7 @@ const Home = () => {
                 width: { xs: "100%", sm: "48%", md: "23%" },
                 cursor: "pointer",
               }}
-              onClick={() => navigate(`/project/${project._id}`)}
+              onClick={() => navigate(`/projects/${project._id}`)}
             >
               <ProjectCard
                 title={project.name}

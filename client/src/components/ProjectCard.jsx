@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { Paper, Typography, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-const ProjectCard = ({ title, description }) => {
+const ProjectCard = ({ project, title, description }) => {
   const [hover, setHover] = useState(false);
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/project1`);
+    navigate(`/projects/${project._id}`);
   };
 
   return (
