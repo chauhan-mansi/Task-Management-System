@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useParams } from "react-router-dom";
-import { getTasksByProject, createTask, deleteTask } from "../../api";
+import { getTasksByProject, createTask,updateTask, deleteTask } from "../../api";
 import Navbar from "../Navbar";
 import Sidebar from "../Sidebar";
 
@@ -43,7 +43,7 @@ const TaskPage = () => {
     priority: "Medium",
     status: "To Do",
   });
-  console.log(tasks, 'takss')
+  console.log(tasks, "takss");
 
   const fetchTasks = async () => {
     try {
@@ -56,7 +56,7 @@ const TaskPage = () => {
       }
 
       const response = await getTasksByProject(projectId, token);
-      console.log(response.data, 'response')
+      console.log(response.data, "response");
       if (response.success) {
         setTasks(response.data);
       } else {
@@ -103,7 +103,7 @@ const TaskPage = () => {
         console.log("✅ Task created successfully:", response.task);
         const updatedTasks = await getTasksByProject(projectId, token);
 
-        setTasks(updatedTasks); 
+        setTasks(updatedTasks);
         setNewTask({
           title: "",
           description: "",
@@ -140,6 +140,31 @@ const TaskPage = () => {
     }
   };
 
+  const handleUpdateTask = async (taskId, field, value) => {
+    try {
+      const token = localStorage.getItem("token");
+      const updatedData = { [field]: value };
+  
+      console.log("Updating task:", taskId, updatedData);
+  
+      const response = await updateTask(taskId, updatedData, token);
+  
+      if (response?.success) {
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task._id === taskId ? { ...task, [field]: value } : task
+          )
+        );
+      } else {
+        console.error("Failed to update task:", response?.message);
+        alert(response?.message || "Failed to update task.");
+      }
+    } catch (error) {
+      console.error("Error updating task:", error);
+      alert("Network error: Failed to update task.");
+    }
+  };
+  
   return (
     <Box sx={{ display: "flex", height: "100vh", backgroundColor: "#f0f0f0" }}>
       <Navbar toggleDrawer={toggleDrawer} />
@@ -211,8 +236,12 @@ const TaskPage = () => {
                     <TableCell>
                       {task.description || "No description"}
                     </TableCell>
-                    <TableCell>{task?.reporter?.name || "Unassigned"}</TableCell>
-                    <TableCell>{task?.assignee?.name || "Unassigned"}</TableCell>
+                    <TableCell>
+                      {task?.reporter?.name || "Unassigned"}
+                    </TableCell>
+                    <TableCell>
+                      {task?.assignee?.name || "Unassigned"}
+                    </TableCell>
                     <TableCell>
                       {task.dueDate
                         ? new Date(task.dueDate).toLocaleDateString()
@@ -223,8 +252,38 @@ const TaskPage = () => {
                         ? `${task.estimatedHours} hrs`
                         : "N/A"}
                     </TableCell>
-                    <TableCell>{task.priority || "Low"}</TableCell>
-                    <TableCell>{task.status || "Pending"}</TableCell>
+                    <TableCell>
+                      <TextField
+                        select
+                        value={task.priority}
+                        onChange={(e) =>
+                          handleUpdateTask(task._id, "priority", e.target.value)
+                        }
+                        fullWidth
+                      >
+                        {priorities.map((priority) => (
+                          <MenuItem key={priority} value={priority}>
+                            {priority}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </TableCell>
+                    <TableCell>
+                      <TextField
+                        select
+                        value={task.status}
+                        onChange={(e) =>
+                          handleUpdateTask(task._id, "status", e.target.value)
+                        }
+                        fullWidth
+                      >
+                        {statuses.map((status) => (
+                          <MenuItem key={status} value={status}>
+                            {status}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </TableCell>
                     <TableCell>
                       <Button
                         color="error"

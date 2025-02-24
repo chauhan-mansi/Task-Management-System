@@ -175,43 +175,68 @@ exports.getTaskById = async (req, res) => {
   }
 };
 
+// exports.updateTask = async (req, res) => {
+//   const {
+//     title,
+//     description,
+//     assignee,
+//     reporter,
+//     status,
+//     priority,
+//     estimatedHours,
+//     id,
+//   } = req.body;
+//   try {
+//     const existingTask = await Task.findById(id);
+//     if (!existingTask) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Task does not exists" });
+//     }
+//     await Task.findByIdAndUpdate(id, {
+//       title,
+//       description,
+//       assignee,
+//       reporter,
+//       status,
+//       priority,
+//       estimatedHours,
+//     });
+//     res
+//       .status(200)
+//       .json({ success: true, message: "Task updated successfully" });
+//   } catch (error) {
+//     console.log(error);
+//     return res
+//       .status(500)
+//       .json({ success: false, message: "Internal server error" });
+//   }
+// };
+
+
 exports.updateTask = async (req, res) => {
-  const {
-    title,
-    description,
-    assignee,
-    reporter,
-    status,
-    priority,
-    estimatedHours,
-    id,
-  } = req.body;
+  const { id } = req.params; // Get ID from URL instead of body
+  const { title, description, assignee, reporter, status, priority, estimatedHours } = req.body;
+
   try {
-    const existingTask = await Task.findById(id);
-    if (!existingTask) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Task does not exists" });
+    // Find and update task
+    const updatedTask = await Task.findByIdAndUpdate(
+      id,
+      { title, description, assignee, reporter, status, priority, estimatedHours },
+      { new: true } // Returns the updated document
+    );
+
+    if (!updatedTask) {
+      return res.status(404).json({ success: false, message: "Task not found" });
     }
-    await Task.findByIdAndUpdate(id, {
-      title,
-      description,
-      assignee,
-      reporter,
-      status,
-      priority,
-      estimatedHours,
-    });
-    res
-      .status(200)
-      .json({ success: true, message: "Task updated successfully" });
+
+    res.status(200).json({ success: true, message: "Task updated successfully", task: updatedTask });
   } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
+    console.error("Error updating task:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
 
 exports.deleteTask = async (req, res) => {
   const { id } = req.params;

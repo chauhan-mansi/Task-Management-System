@@ -15,6 +15,6 @@ router.post("/", isAuthenticateUser, createTask);
 router.get("/:projectId", isAuthenticateUser, getTasksByProject);
 router.get("/", isAuthenticateUser, getTask);
 router.get("/:id", isAuthenticateUser, getTaskById);
-router.put("/", isAuthenticateUser, updateTask);
+router.put("/:id", isAuthenticateUser, updateTask);
 router.delete("/:id", isAuthenticateUser, deleteTask);
 module.exports = router;

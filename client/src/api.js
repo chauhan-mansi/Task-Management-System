@@ -100,16 +100,43 @@ export const createTask = async (taskData, token) => {
   }
 };
 
+
 export const deleteTask = async (taskId, token) => {
   try {
-    const response = await axios.delete(`${API_URL}/${taskId}`, {
+    const response = await fetch(`http://localhost:3000/task/${taskId}`, {
+      method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
+
+    const data = await response.json();
+    return data;
   } catch (error) {
-    console.error("Error deleting task:", error.response?.data || error);
-    return null;
+    console.error("Error deleting task:", error);
+    return { success: false, message: "Failed to delete task" };
   }
 };
+
+export const updateTask = async (taskId, updatedData, token) => {
+  try {
+    const response = await fetch(`http://localhost:3000/task/${taskId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating task:", error);
+    return { success: false, message: "Failed to update task" };
+  }
+};
+
