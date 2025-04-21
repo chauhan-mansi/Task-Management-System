@@ -1,21 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./components/pages/Login.jsx";
-import Signup from "./components/pages/Signup.jsx";
-import Home from "./components/pages/Home.jsx";
-import TaskPage from "./components/pages/Taskpage.jsx";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+import Login from "./components/pages/Login";
+import Signup from "./components/pages/Signup";
+import Home from "./components/pages/Home";
+import TaskPage from "./components/pages/Taskpage";
+import UserProfile from "./components/pages/UserProfile";
 
 function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/projects/:projectId" element={<TaskPage />} />
+      <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
+      <Sidebar
+        isOpen={sidebarOpen}
+        toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+      />
 
-      </Routes>
+      <div className={`pt-16 ${sidebarOpen ? "md:pl-64" : ""}`}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/me" element={<UserProfile />} />
+          <Route path="/projects/:projectId" element={<TaskPage />} />
+        </Routes>
+      </div>
     </Router>
   );
 }

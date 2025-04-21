@@ -116,52 +116,25 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// exports.userLogin = async (req, res, next) => {
-//   try {
-//     const { email, password } = req.body;
+exports.getCurrentUser = async (req, res) => {
+  try {
+    console.log("🧾 req.user:", req.user);
 
-//     if (!email || !password) {
-//       return res
-//         .status(401)
-//         .json({ success: false, message: "Invalid email or password" });
-//     }
+    const currentUser = await user.findById(req.user.id).select("-password");
+    if (!currentUser) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
 
-//     const userss = await user.findOne({ email });
-//     if (!userss) {
-//       return res
-//         .status(401)
-//         .json({ success: false, message: "User not found" });
-//     }
-
-//     const isPasswordMatch = await comparePassword(password, userss.password);
-//     if (!isPasswordMatch) {
-//       return res
-//         .status(401)
-//         .json({ success: false, message: "Incorrect email or password" });
-//     }
-
-//     const accessToken = generateAccessToken(userss);
-
-//     const formattedUser = {
-//       id: userss._id,
-//       fullName: userss.fullName,
-//       isProfileComplete: userss.isProfileComplete,
-//       accessToken,
-//       gender: userss.gender || "",
-//     };
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "User successfully loggedin",
-//       formattedUser,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     return res
-//       .status(401)
-//       .json({ success: false, message: "Internal Server Error" });
-//   }
-// };
+    return res.status(200).json({ success: true, data: currentUser });
+  } catch (error) {
+    console.log(" Error in getCurrentUser:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal Server Error" });
+  }
+};
 
 exports.userLogin = async (req, res, next) => {
   try {

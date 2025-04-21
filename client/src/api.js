@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_BASE_URL = "http://localhost:3000/project";
 const API_URL = "http://localhost:3000/task";
+const BASE_URL = "http://localhost:3000/user/me";
 
 const getAuthToken = () => localStorage.getItem("token");
 
@@ -100,7 +101,6 @@ export const createTask = async (taskData, token) => {
   }
 };
 
-
 export const deleteTask = async (taskId, token) => {
   try {
     const response = await fetch(`http://localhost:3000/task/${taskId}`, {
@@ -140,3 +140,47 @@ export const updateTask = async (taskId, updatedData, token) => {
   }
 };
 
+export const getUser = async (token) => {
+  try {
+    const response = await fetch("http://localhost:3000/user/me", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch user");
+    }
+
+    const data = await response.json();
+    console.log("API Response in getUser:", data);
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
+
+
+
+export const updateUser = async (userData, token) => {
+  try {
+    const response = await fetch(`http://localhost:3000/user/${userId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+};
