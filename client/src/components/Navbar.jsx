@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
+import Tooltip from "@mui/material/Tooltip";
+import { VscAccount } from "react-icons/vsc";
 
 const Navbar = ({ toggleSidebar }) => {
   return (
@@ -18,12 +20,13 @@ const Navbar = ({ toggleSidebar }) => {
         </h1>
 
         <div className="flex space-x-3 ml-auto">
-          <Link
-            to="/me"
-            className="px-4 py-2 rounded-md text-sm font-medium bg-white text-indigo-600 hover:bg-gray-100"
-          >
-            User
-          </Link>
+          <Tooltip title="User Profile" arrow>
+            <Link to="/me" className="focus:outline-none">
+              <VscAccount
+                className="text-white w-10 h-10 hover:ring-2 hover:ring-white hover:ring-opacity-50 transition-all duration-200"
+              />
+            </Link>
+          </Tooltip>
           {/* <Link
             to="/signup"
             className="hidden sm:block px-4 py-2 rounded-md text-sm font-medium bg-indigo-500 text-white hover:bg-indigo-700"

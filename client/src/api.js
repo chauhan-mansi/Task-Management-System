@@ -164,8 +164,6 @@ export const getUser = async (token) => {
   }
 };
 
-
-
 export const updateUser = async (userData, token) => {
   try {
     const response = await fetch(`http://localhost:3000/user/${userId}`, {

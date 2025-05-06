@@ -13,6 +13,7 @@ import ProjectCard from "../ProjectCard";
 import Dashboard from "../Dashboard";
 import { getProjects, createProject, deleteProject } from "../../api";
 import { motion, AnimatePresence } from "framer-motion";
+import mainImage from "../../assets/main.jpg"; 
 
 const Home = () => {
   const [projects, setProjects] = useState([]);
@@ -201,7 +202,7 @@ const Home = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <img
-                src="client\src\components\main.jpg"
+                src={mainImage} 
                 alt="Task Management"
                 className="rounded-lg shadow-xl w-full object-cover h-64 md:h-96"
               />
